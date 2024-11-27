@@ -1,0 +1,678 @@
+--Version: 3.2
+if game.CoreGui:FindFirstChild("SCP Foundation") then
+	game.CoreGui:FindFirstChild("SCP Foundation"):Destroy()
+end
+
+--Services
+local TweenService = game:GetService("TweenService")
+local runService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+--Settings
+local storedDoors = {}
+local storedVents = {}
+
+local buttonCD = false
+local buttonCooldownTime = 0.65
+
+local minimizeTweenInfo = TweenInfo.new(
+	0.5,
+	Enum.EasingStyle.Quad,
+	Enum.EasingDirection.Out
+)
+
+--Insert all doors into table
+local function collectDoorModels()
+	for i, obj in pairs(workspace:GetDescendants()) do
+		if obj:IsA("Model") then
+			local modelName = obj.Name:lower()
+			if string.find(modelName, "door") or string.find(modelName, "gate") then
+				table.insert(storedDoors, obj)
+			end
+		end
+	end
+
+	return storedDoors
+end
+
+local function collectVentModels()
+	for i, obj in pairs(workspace:GetDescendants()) do
+		if obj:IsA("Part") or obj:IsA("MeshPart") then
+			if obj.Parent.Name == "ExplosionVent" then
+				table.insert(storedVents, obj)
+			else
+				local modelName = obj.Name:lower()
+				if string.find(modelName, "vent") then
+					table.insert(storedVents, obj)
+				end
+			end
+		end
+	end
+
+	return storedVents
+end
+
+wait()
+
+collectDoorModels()
+collectVentModels()
+
+--Doors UI
+local doorsUICollapsed = true
+
+--Instances:
+local SCPFoundation = Instance.new("ScreenGui")
+local PlaceHolder = Instance.new("Frame")
+local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
+local DoorsFrame = Instance.new("Frame")
+local MainFrame = Instance.new("Frame")
+local AutoOpenDoors = Instance.new("Frame")
+local AutoOpenButtonFrame = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local AutoOpenLabel = Instance.new("TextLabel")
+local AutoOpenButton = Instance.new("TextButton")
+local AutoVents = Instance.new("Frame")
+local AutoVentsButtonFrame = Instance.new("Frame")
+local UICorner_2 = Instance.new("UICorner")
+local AutoVentsLabel = Instance.new("TextLabel")
+local AutoVentsButton = Instance.new("TextButton")
+local RemoveDoors = Instance.new("Frame")
+local RemoveDoorsButtonFrame = Instance.new("Frame")
+local UICorner_3 = Instance.new("UICorner")
+local RemoveDoorsLabel = Instance.new("TextLabel")
+local RemoveDoorsButton = Instance.new("TextButton")
+local DoorsBackDrop = Instance.new("TextLabel")
+local UIStrokeFrame = Instance.new("Frame")
+local DoorsFrameUIStroke = Instance.new("UIStroke")
+local UIStrokeFrameStroke = Instance.new("UIStroke")
+local AutoOpenFrameUIStroke = Instance.new("UIStroke")
+local AutoOpenLabelUIStroke = Instance.new("UIStroke")
+local AutoVentsFrameUIStroke = Instance.new("UIStroke")
+local AutoVentsLabelUIStroke = Instance.new("UIStroke")
+local RemoveDoorsFrameUIStroke = Instance.new("UIStroke")
+local RemoveDoorsLabelUIStroke = Instance.new("UIStroke")
+local MinimizeUIStroke = Instance.new("UIStroke")
+local DoorsLabel = Instance.new("TextLabel")
+local Minimize = Instance.new("TextButton")
+local UICorner_4 = Instance.new("UICorner")
+
+--Properties:
+SCPFoundation.Name = "SCP Foundation"
+SCPFoundation.Parent = game.CoreGui
+
+PlaceHolder.Name = "Main Frame"
+PlaceHolder.Parent = SCPFoundation
+PlaceHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+PlaceHolder.BackgroundTransparency = 1.000
+PlaceHolder.BorderColor3 = Color3.fromRGB(0, 0, 0)
+PlaceHolder.BorderSizePixel = 0
+PlaceHolder.Size = UDim2.new(1, 0, 1, 0)
+
+UIAspectRatioConstraint.Parent = PlaceHolder
+UIAspectRatioConstraint.AspectRatio = 2.000
+
+DoorsFrame.Name = "Doors Frame"
+DoorsFrame.Parent = PlaceHolder
+DoorsFrame.BackgroundColor3 = Color3.fromRGB(29, 29, 29)
+DoorsFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+DoorsFrame.BorderSizePixel = 0
+DoorsFrame.LayoutOrder = 5
+DoorsFrame.Position = UDim2.new(0.722741425, 0, 0.0423675999, 0)
+DoorsFrame.Size = UDim2.new(0.0996884704, 0, 0.05046729, 0)
+DoorsFrame.ZIndex = 5
+DoorsFrame.Active = true
+DoorsFrame.Draggable = true
+
+MainFrame.Name = "Main Frame"
+MainFrame.Parent = DoorsFrame
+MainFrame.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
+MainFrame.BackgroundTransparency = 0.100
+MainFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+MainFrame.BorderSizePixel = 0
+MainFrame.Position = UDim2.new(7.62939464e-07, 0, 0.980722666, 0)
+MainFrame.Size = UDim2.new(0.99999845, 0, 3.71850586, 0)
+
+
+AutoOpenDoors.Name = "Auto Open Doors"
+AutoOpenDoors.Parent = MainFrame
+AutoOpenDoors.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+AutoOpenDoors.BackgroundTransparency = 1.000
+AutoOpenDoors.BorderColor3 = Color3.fromRGB(0, 0, 0)
+AutoOpenDoors.BorderSizePixel = 0
+AutoOpenDoors.Position = UDim2.new(-0.00625000941, 0, 0.0996019319, 0)
+AutoOpenDoors.Size = UDim2.new(1.00000012, 0, 0.216464803, 0)
+
+AutoOpenButtonFrame.Name = "Auto Open Button Frame"
+AutoOpenButtonFrame.Parent = AutoOpenDoors
+AutoOpenButtonFrame.BackgroundColor3 = Color3.fromRGB(255, 41, 41)
+AutoOpenButtonFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+AutoOpenButtonFrame.BorderSizePixel = 0
+AutoOpenButtonFrame.Position = UDim2.new(0.714678466, 0, 0.107460074, 0)
+AutoOpenButtonFrame.Size = UDim2.new(0.162571952, 0, 0.736207902, 0)
+
+UICorner.Parent = AutoOpenButtonFrame
+
+AutoOpenLabel.Name = "Auto Open Label"
+AutoOpenLabel.Parent = AutoOpenButtonFrame
+AutoOpenLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+AutoOpenLabel.BackgroundTransparency = 1.000
+AutoOpenLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+AutoOpenLabel.BorderSizePixel = 0
+AutoOpenLabel.Position = UDim2.new(-3.77681303, 0, 0.124845505, 0)
+AutoOpenLabel.Size = UDim2.new(3.46055841, 0, 0.736208022, 0)
+AutoOpenLabel.Font = Enum.Font.FredokaOne
+AutoOpenLabel.Text = "Auto Open"
+AutoOpenLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoOpenLabel.TextScaled = true
+AutoOpenLabel.TextSize = 14.000
+AutoOpenLabel.TextWrapped = true
+
+AutoOpenButton.Name = "Auto Open Button"
+AutoOpenButton.Parent = AutoOpenButtonFrame
+AutoOpenButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+AutoOpenButton.BackgroundTransparency = 1.000
+AutoOpenButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+AutoOpenButton.BorderSizePixel = 0
+AutoOpenButton.Size = UDim2.new(1, 0, 1, 0)
+AutoOpenButton.Font = Enum.Font.SourceSans
+AutoOpenButton.Text = ""
+AutoOpenButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+AutoOpenButton.TextSize = 14.000
+
+local AutoOpenCD = false
+local AutoOpenisOn = false
+
+local AutoOpenCD = false
+local AutoOpenisOn = false
+
+AutoOpenButton.MouseButton1Down:Connect(function()
+	if AutoOpenCD == false and AutoOpenisOn == false then
+		AutoOpenCD = true
+		AutoOpenisOn = true
+		AutoOpenButtonFrame.BackgroundColor3 = Color3.new(0, 1, 0)
+
+		local function autoFireProximityPrompts()
+			while AutoOpenisOn do
+				wait(0.01)
+
+				local Plr = game:GetService("Players").LocalPlayer
+				local Char = Plr.Character
+				local humRP = Char:FindFirstChild("HumanoidRootPart")
+
+				local playerGui = Plr:FindFirstChild("PlayerGui")
+				local proximityPrompts = playerGui:FindFirstChild("ProximityPrompts")
+				local CLICK_RANGE = 12
+
+				if #proximityPrompts:GetChildren() > 0 then
+					for i, door in pairs(storedDoors) do
+						-- Find all ProximityPrompts in the current door model
+						for _, prompt in pairs(door:GetDescendants()) do
+							if prompt:IsA("ProximityPrompt") and prompt.Enabled then
+								local parentPart = prompt.Parent
+								if parentPart and parentPart:IsA("BasePart") and 
+									(parentPart.Position - humRP.Position).Magnitude <= CLICK_RANGE then
+									fireproximityprompt(prompt)
+									wait(0.1) -- Prevent overlapping prompt firing
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+
+		spawn(autoFireProximityPrompts)
+
+		wait(0.1)
+		AutoOpenCD = false
+
+	elseif AutoOpenCD == false and AutoOpenisOn == true then
+		AutoOpenCD = true
+		AutoOpenisOn = false
+
+		AutoOpenButtonFrame.BackgroundColor3 = Color3.new(1, 0.160784, 0.160784)
+
+		wait(0.1)
+		AutoOpenCD = false
+	end
+end)
+
+AutoOpenButton.MouseEnter:Connect(function()
+	if AutoOpenisOn == false then
+		AutoOpenButtonFrame.BackgroundColor3 = Color3.new(0.470588, 0.0745098, 0.0745098)
+	elseif AutoOpenisOn == true then
+		AutoOpenButtonFrame.BackgroundColor3 = Color3.new(0, 0.498039, 0)
+	end
+end)
+
+AutoOpenButton.MouseLeave:Connect(function()
+	if AutoOpenisOn == false then
+		AutoOpenButtonFrame.BackgroundColor3 = Color3.new(1, 0.160784, 0.160784)
+	elseif AutoOpenisOn == true then
+		AutoOpenButtonFrame.BackgroundColor3 = Color3.new(0, 1, 0)
+	end
+end)
+
+AutoVents.Name = "Auto Vents"
+AutoVents.Parent = MainFrame
+AutoVents.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+AutoVents.BackgroundTransparency = 1.000
+AutoVents.BorderColor3 = Color3.fromRGB(0, 0, 0)
+AutoVents.BorderSizePixel = 0
+AutoVents.Position = UDim2.new(-0.00625000941, 0, 0.391767591, 0)
+AutoVents.Size = UDim2.new(1.00000012, 0, 0.216464803, 0)
+
+AutoVentsButtonFrame.Name = "Auto Vents Button Frame"
+AutoVentsButtonFrame.Parent = AutoVents
+AutoVentsButtonFrame.BackgroundColor3 = Color3.fromRGB(255, 41, 41)
+AutoVentsButtonFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+AutoVentsButtonFrame.BorderSizePixel = 0
+AutoVentsButtonFrame.Position = UDim2.new(0.714678466, 0, 0.107460074, 0)
+AutoVentsButtonFrame.Size = UDim2.new(0.162571952, 0, 0.736207902, 0)
+
+UICorner_2.Parent = AutoVentsButtonFrame
+
+AutoVentsLabel.Name = "Auto Vents Label"
+AutoVentsLabel.Parent = AutoVentsButtonFrame
+AutoVentsLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+AutoVentsLabel.BackgroundTransparency = 1.000
+AutoVentsLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+AutoVentsLabel.BorderSizePixel = 0
+AutoVentsLabel.Position = UDim2.new(-3.77681303, 0, 0.124845505, 0)
+AutoVentsLabel.Size = UDim2.new(3.46055841, 0, 0.736208022, 0)
+AutoVentsLabel.Font = Enum.Font.FredokaOne
+AutoVentsLabel.Text = "Auto Vents"
+AutoVentsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoVentsLabel.TextScaled = true
+AutoVentsLabel.TextSize = 14.000
+AutoVentsLabel.TextWrapped = true
+
+AutoVentsButton.Name = "Auto Vents Button"
+AutoVentsButton.Parent = AutoVentsButtonFrame
+AutoVentsButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+AutoVentsButton.BackgroundTransparency = 1.000
+AutoVentsButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+AutoVentsButton.BorderSizePixel = 0
+AutoVentsButton.Size = UDim2.new(1, 0, 1, 0)
+AutoVentsButton.Font = Enum.Font.SourceSans
+AutoVentsButton.Text = ""
+AutoVentsButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+AutoVentsButton.TextSize = 14.000
+
+local autoOpenVentsCD = false
+local autoVentsisOn = false
+
+AutoVentsButton.MouseButton1Down:Connect(function()
+	-- Check if the button is pressed and conditions are met
+	if autoOpenVentsCD == false and autoVentsisOn == false then
+		autoOpenVentsCD = true
+		autoVentsisOn = true
+		AutoVentsButtonFrame.BackgroundColor3 = Color3.new(0, 1, 0)
+
+		-- Function to auto-click vents
+		local function autoClickVents()
+			while autoVentsisOn do
+				wait()
+
+				-- Get the local player and their character every loop iteration
+				local Plr = game:GetService("Players").LocalPlayer
+				local Char = Plr.Character  -- Always refer to the current character
+				local humRP = Char:FindFirstChild("HumanoidRootPart")
+				local CLICK_RANGE = 10
+
+				-- If the character or HumanoidRootPart doesn't exist, skip
+				if not Char or not humRP then
+					continue
+				end
+
+				-- Loop through all stored vents
+				for _, vent in pairs(storedVents) do
+					if vent then
+						-- Check if the vent has a ClickDetector
+						local clickDetector = vent:FindFirstChild("ClickDetector")
+
+						if clickDetector then
+							-- Calculate the distance between the player and the vent
+							local ventPosition = vent.Position
+							local distance = (ventPosition - humRP.Position).Magnitude
+
+							-- Only try to click the vent if the player is within range
+							if distance <= CLICK_RANGE then
+								print("Player is close to vent, attempting to click")  -- Debug log
+								fireclickdetector(clickDetector)
+								fireclickdetector(clickDetector)
+							end
+						end
+					end
+				end
+			end
+		end
+
+		spawn(autoClickVents)
+
+		wait(0.1)
+		autoOpenVentsCD = false
+
+	elseif autoOpenVentsCD == false and autoVentsisOn == true then
+		-- Stop the auto-clicking process when toggled off
+		autoOpenVentsCD = true
+		autoVentsisOn = false
+		AutoVentsButtonFrame.BackgroundColor3 = Color3.new(1, 0.160784, 0.160784)
+
+		wait(0.1)
+		autoOpenVentsCD = false
+	end
+end)
+
+AutoVentsButton.MouseEnter:Connect(function()
+	if autoVentsisOn == false then
+		AutoVentsButtonFrame.BackgroundColor3 = Color3.new(0.470588, 0.0745098, 0.0745098)
+	elseif autoVentsisOn == true then
+		AutoVentsButtonFrame.BackgroundColor3 = Color3.new(0, 0.498039, 0)
+	end
+end)
+
+AutoVentsButton.MouseLeave:Connect(function()
+	if autoVentsisOn == false then
+		AutoVentsButtonFrame.BackgroundColor3 = Color3.new(1, 0.160784, 0.160784)
+	elseif autoVentsisOn == true then
+		AutoVentsButtonFrame.BackgroundColor3 = Color3.new(0, 1, 0)
+	end
+end)
+
+RemoveDoors.Name = "Remove Doors"
+RemoveDoors.Parent = MainFrame
+RemoveDoors.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+RemoveDoors.BackgroundTransparency = 1.000
+RemoveDoors.BorderColor3 = Color3.fromRGB(0, 0, 0)
+RemoveDoors.BorderSizePixel = 0
+RemoveDoors.Position = UDim2.new(-0.00625000941, 0, 0.677293122, 0)
+RemoveDoors.Size = UDim2.new(1.00000012, 0, 0.216464803, 0)
+
+RemoveDoorsButtonFrame.Name = "Remove Doors Button Frame"
+RemoveDoorsButtonFrame.Parent = RemoveDoors
+RemoveDoorsButtonFrame.BackgroundColor3 = Color3.fromRGB(255, 41, 41)
+RemoveDoorsButtonFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+RemoveDoorsButtonFrame.BorderSizePixel = 0
+RemoveDoorsButtonFrame.Position = UDim2.new(0.714678466, 0, 0.107460074, 0)
+RemoveDoorsButtonFrame.Size = UDim2.new(0.162571952, 0, 0.736207902, 0)
+
+UICorner_3.Parent = RemoveDoorsButtonFrame
+
+RemoveDoorsLabel.Name = "Remove Doors Label"
+RemoveDoorsLabel.Parent = RemoveDoorsButtonFrame
+RemoveDoorsLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+RemoveDoorsLabel.BackgroundTransparency = 1.000
+RemoveDoorsLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+RemoveDoorsLabel.BorderSizePixel = 0
+RemoveDoorsLabel.Position = UDim2.new(-3.77681303, 0, 0.124845505, 0)
+RemoveDoorsLabel.Size = UDim2.new(3.46055841, 0, 0.736208022, 0)
+RemoveDoorsLabel.Font = Enum.Font.FredokaOne
+RemoveDoorsLabel.Text = "Remove Doors"
+RemoveDoorsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+RemoveDoorsLabel.TextScaled = true
+RemoveDoorsLabel.TextSize = 14.000
+RemoveDoorsLabel.TextWrapped = true
+
+RemoveDoorsButton.Name = "Remove Doors Button"
+RemoveDoorsButton.Parent = RemoveDoorsButtonFrame
+RemoveDoorsButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+RemoveDoorsButton.BackgroundTransparency = 1.000
+RemoveDoorsButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+RemoveDoorsButton.BorderSizePixel = 0
+RemoveDoorsButton.Size = UDim2.new(1, 0, 1, 0)
+RemoveDoorsButton.Font = Enum.Font.SourceSans
+RemoveDoorsButton.Text = ""
+RemoveDoorsButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+RemoveDoorsButton.TextSize = 14.000
+
+local RemoveDoorsIsOn = false
+local removeDoorsCD = false
+local removedDoorsAndVents = {}
+
+RemoveDoorsButton.MouseButton1Down:Connect(function()
+	if removeDoorsCD == false and RemoveDoorsIsOn == false then
+		-- Begin remove doors process
+		removeDoorsCD = true
+		RemoveDoorsIsOn = true
+		RemoveDoorsButtonFrame.BackgroundColor3 = Color3.new(0, 1, 0)
+
+		local success, err = pcall(function()
+			local ReplicatedStorage = game:GetService("ReplicatedStorage")
+			local doorsFolder = ReplicatedStorage:FindFirstChild("RemovedDoors") or Instance.new("Folder", ReplicatedStorage)
+			doorsFolder.Name = "RemovedDoors"
+
+			-- Combine doors and vents into a single loop
+			local combinedObjects = {} -- Temporary combined table
+			for i, door in pairs(storedDoors) do
+				table.insert(combinedObjects, door)
+			end
+			for i, vent in pairs(storedVents) do
+				table.insert(combinedObjects, vent)
+			end
+
+			-- Move doors and vents to the new folder and store their original parents
+			for i, obj in pairs(combinedObjects) do
+				if obj and obj.Parent then
+					removedDoorsAndVents[obj] = obj.Parent -- Save the original parent
+					obj.Parent = doorsFolder -- Move the object to ReplicatedStorage
+				end
+			end
+		end)
+
+		if not success then
+			warn("Error occurred during RemoveDoors process:", err)
+		end
+
+		wait(0.1)
+		removeDoorsCD = false
+
+	elseif removeDoorsCD == false and RemoveDoorsIsOn == true then
+		-- Begin restore process
+		removeDoorsCD = true
+		RemoveDoorsButtonFrame.BackgroundColor3 = Color3.new(1, 0.160784, 0.160784)
+
+		local success, err = pcall(function()
+			-- Restore all doors and vents to their original parents
+			for obj, originalParent in pairs(removedDoorsAndVents) do
+				warn(obj, originalParent)
+				if obj and originalParent then
+					-- Object exists, restore it
+					obj.Parent = originalParent
+				else
+					-- Object was deleted, log a warning and skip it
+					print("Warning: Object missing or deleted - skipping restore for:", obj)
+				end
+			end
+
+			removedDoorsAndVents = {} -- Clear the table
+			RemoveDoorsIsOn = false
+		end)
+
+		if not success then
+			warn("Error occurred during Restore process:", err)
+		end
+
+		wait(0.1)
+		removeDoorsCD = false
+	end
+end)
+
+RemoveDoorsButton.MouseEnter:Connect(function()
+	if RemoveDoorsIsOn == false then
+		RemoveDoorsButtonFrame.BackgroundColor3 = Color3.new(0.470588, 0.0745098, 0.0745098)
+	elseif RemoveDoorsIsOn == true then
+		RemoveDoorsButtonFrame.BackgroundColor3 = Color3.new(0, 0.498039, 0)
+	end
+end)
+
+RemoveDoorsButton.MouseLeave:Connect(function()
+	if RemoveDoorsIsOn == false then
+		RemoveDoorsButtonFrame.BackgroundColor3 = Color3.new(1, 0.160784, 0.160784)
+	elseif RemoveDoorsIsOn == true then
+		RemoveDoorsButtonFrame.BackgroundColor3 = Color3.new(0, 1, 0)
+	end
+end)
+
+DoorsBackDrop.Name = "Doors BackDrop"
+DoorsBackDrop.Parent = DoorsFrame
+DoorsBackDrop.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+DoorsBackDrop.BackgroundTransparency = 1.000
+DoorsBackDrop.BorderColor3 = Color3.fromRGB(0, 0, 0)
+DoorsBackDrop.BorderSizePixel = 0
+DoorsBackDrop.LayoutOrder = 5
+DoorsBackDrop.Position = UDim2.new(0.106250003, 0, 0.149000004, 0)
+DoorsBackDrop.Size = UDim2.new(0.78125, 0, 0.777777791, 0)
+DoorsBackDrop.ZIndex = 5
+DoorsBackDrop.Font = Enum.Font.FredokaOne
+DoorsBackDrop.Text = "Doors"
+DoorsBackDrop.TextColor3 = Color3.fromRGB(0, 0, 0)
+DoorsBackDrop.TextScaled = true
+DoorsBackDrop.TextSize = 14.000
+DoorsBackDrop.TextWrapped = true
+
+UIStrokeFrame.Name = "UI Stroke Frame"
+UIStrokeFrame.Parent = DoorsFrame
+UIStrokeFrame.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
+UIStrokeFrame.BackgroundTransparency = 1.000
+UIStrokeFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+UIStrokeFrame.BorderSizePixel = 0
+UIStrokeFrame.Position = UDim2.new(0, 0, 1.88380113e-07, 0)
+UIStrokeFrame.Size = UDim2.new(1, 0, 4.69922876, 0)
+UIStrokeFrame.ZIndex = -1
+
+DoorsFrameUIStroke.Name = "DoorsFrameUIStroke"
+DoorsFrameUIStroke.Parent = DoorsFrame
+DoorsFrameUIStroke.Color = Color3.fromRGB(15, 15, 15)
+DoorsFrameUIStroke.Transparency = 0
+DoorsFrameUIStroke.Thickness = 1
+DoorsFrameUIStroke.Enabled = true
+
+UIStrokeFrameStroke.Name = "UIStrokeFrameStroke"
+UIStrokeFrameStroke.Parent = UIStrokeFrame
+UIStrokeFrameStroke.Color = Color3.fromRGB(15, 15, 15)
+UIStrokeFrameStroke.Transparency = 0
+UIStrokeFrameStroke.Thickness = 1
+UIStrokeFrameStroke.Enabled = true
+
+AutoOpenFrameUIStroke.Name = "AutoOpenFrameUIStroke"
+AutoOpenFrameUIStroke.Parent = AutoOpenButtonFrame
+AutoOpenFrameUIStroke.Color = Color3.fromRGB(15, 15, 15)
+AutoOpenFrameUIStroke.Transparency = 0
+AutoOpenFrameUIStroke.Thickness = 2
+AutoOpenFrameUIStroke.Enabled = true
+
+AutoOpenLabelUIStroke.Name = "AutoOpenLabelUIStroke"
+AutoOpenLabelUIStroke.Parent = AutoOpenLabel
+AutoOpenLabelUIStroke.Color = Color3.fromRGB(15, 15, 15)
+AutoOpenLabelUIStroke.Transparency = 0
+AutoOpenLabelUIStroke.Thickness = 2
+AutoOpenLabelUIStroke.Enabled = true
+
+AutoVentsFrameUIStroke.Name = "AutoVentsFrameUIStroke"
+AutoVentsFrameUIStroke.Parent = AutoVentsButtonFrame
+AutoVentsFrameUIStroke.Color = Color3.fromRGB(15, 15, 15)
+AutoVentsFrameUIStroke.Transparency = 0
+AutoVentsFrameUIStroke.Thickness = 2
+AutoVentsFrameUIStroke.Enabled = true
+
+AutoVentsLabelUIStroke.Name = "AutoVentsLabelUIStroke"
+AutoVentsLabelUIStroke.Parent = AutoVentsLabel
+AutoVentsLabelUIStroke.Color = Color3.fromRGB(15, 15, 15)
+AutoVentsLabelUIStroke.Transparency = 0
+AutoVentsLabelUIStroke.Thickness = 2
+AutoVentsLabelUIStroke.Enabled = true
+
+RemoveDoorsFrameUIStroke.Name = "RemoveDoorsFrameUIStroke"
+RemoveDoorsFrameUIStroke.Parent = RemoveDoorsButtonFrame
+RemoveDoorsFrameUIStroke.Color = Color3.fromRGB(15, 15, 15)
+RemoveDoorsFrameUIStroke.Transparency = 0
+RemoveDoorsFrameUIStroke.Thickness = 2
+RemoveDoorsFrameUIStroke.Enabled = true
+
+RemoveDoorsLabelUIStroke.Name = "RemoveDoorsLabelUIStroke"
+RemoveDoorsLabelUIStroke.Parent = RemoveDoorsLabel
+RemoveDoorsLabelUIStroke.Color = Color3.fromRGB(15, 15, 15)
+RemoveDoorsLabelUIStroke.Transparency = 0
+RemoveDoorsLabelUIStroke.Thickness = 2
+RemoveDoorsLabelUIStroke.Enabled = true
+
+MinimizeUIStroke.Name = "MinimizeUIStroke"
+MinimizeUIStroke.Parent = Minimize
+MinimizeUIStroke.Color = Color3.fromRGB(15, 15, 15)
+MinimizeUIStroke.Transparency = 0
+MinimizeUIStroke.Thickness = 2.2
+MinimizeUIStroke.Enabled = true
+
+DoorsLabel.Name = "Doors Label"
+DoorsLabel.Parent = DoorsFrame
+DoorsLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+DoorsLabel.BackgroundTransparency = 1.000
+DoorsLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+DoorsLabel.BorderSizePixel = 0
+DoorsLabel.LayoutOrder = 5
+DoorsLabel.Position = UDim2.new(0.152249902, 0, 0.115000032, 0)
+DoorsLabel.Size = UDim2.new(0.725000024, 0, 0.777777791, 0)
+DoorsLabel.ZIndex = 5
+DoorsLabel.Font = Enum.Font.FredokaOne
+DoorsLabel.Text = "Doors"
+DoorsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+DoorsLabel.TextScaled = true
+DoorsLabel.TextSize = 14.000
+DoorsLabel.TextWrapped = true
+
+Minimize.Name = "Minimize"
+Minimize.Parent = DoorsFrame
+Minimize.BackgroundColor3 = Color3.fromRGB(67, 67, 67)
+Minimize.BackgroundTransparency = 0.550
+Minimize.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Minimize.BorderSizePixel = 0
+Minimize.LayoutOrder = 5
+Minimize.Position = UDim2.new(0.0500000007, 0, 0.222222224, 0)
+Minimize.Size = UDim2.new(0.152249902, 0, 0.598084271, 0)
+Minimize.ZIndex = 5
+Minimize.Font = Enum.Font.Highway
+Minimize.Text = "-"
+Minimize.TextColor3 = Color3.fromRGB(255, 255, 255)
+Minimize.TextScaled = true
+Minimize.TextSize = 14.000
+Minimize.TextWrapped = true
+Minimize.MouseButton1Down:Connect(function()
+	if doorsUICollapsed == false and buttonCD == false then
+		buttonCD = true
+		doorsUICollapsed = true
+		
+		MainFrame.Visible = true
+		
+		local tween = TweenService:Create(MainFrame, minimizeTweenInfo, {Size = UDim2.new(1, 0, 3.719, 0)})
+		local tweenUIStroke = TweenService:Create(UIStrokeFrame, minimizeTweenInfo, {Size = UDim2.new(1, 0, 4.699, 0)})
+		tween:Play()
+		tweenUIStroke:Play()
+		
+		Minimize.Text = "-"
+
+		wait(buttonCooldownTime)
+		buttonCD = false
+	elseif doorsUICollapsed == true and buttonCD == false then
+		buttonCD = true
+		doorsUICollapsed = false
+		
+		local tween = TweenService:Create(MainFrame, minimizeTweenInfo, {Size = UDim2.new(1, 0, 0.002, 0)})
+		local tweenUIStroke = TweenService:Create(UIStrokeFrame, minimizeTweenInfo, {Size = UDim2.new(1, 0, 1, 0)})
+		tween:Play()
+		tweenUIStroke:Play()
+
+		tween.Completed:Connect(function()
+			wait(0.1)
+			MainFrame.Visible = false
+		end)
+		
+		Minimize.Text = "+"
+
+		wait(buttonCooldownTime)
+		
+		buttonCD = false
+	end
+end)
+
+UICorner_4.Parent = Minimize
